@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import { app } from "./app.js";
 import dotenv from "dotenv";
+import { setupSocket } from "./socket.js";
 dotenv.config();
 
 const port = Number(process.env.PORT) || 3786; // your app port
@@ -23,6 +24,8 @@ const options: https.ServerOptions = {
 	honorCipherOrder: true,
 };
 
-https.createServer(options, app).listen(port, "::", () => {
+const server = https.createServer(options, app).listen(port, "::", () => {
 	console.log(`HTTPS server running on ${port}`);
 });
+
+const io = setupSocket(server);

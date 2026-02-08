@@ -15,4 +15,6 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 			console.log(`User: ${socket.id} disconnected`);
 		});
 	});
+
+	return io;
 };
