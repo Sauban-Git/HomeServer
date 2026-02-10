@@ -1,8 +1,11 @@
 import exporess, { type Request, type Response } from "express";
+import { apiRouter } from "./routes/index.js";
 
 export const app = exporess();
 
 app.use(exporess.json());
+
+app.use("/api", apiRouter);
 
 app.get("/", (req: Request, res: Response) => {
 	res.json({

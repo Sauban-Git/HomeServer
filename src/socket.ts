@@ -14,6 +14,25 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 		socket.on("disconnect", () => {
 			console.log(`User: ${socket.id} disconnected`);
 		});
+
+		socket.on("message:new", (payload) => {
+			console.log(`${socket.id}: ${payload.msg}`);
+			if (!payload.roomId) {
+				console.log("No roomId to broadcase this message");
+			} else {
+				socket.to(payload.roomId).emit("message:new", { msg: payload.msg });
+			}
+		});
+
+		socket.on("message:reply", (payload) => {
+			console.log(`reply to: ${payload.orgMsg} \n ${payload.msg}`);
+		});
+
+		socket.on("conversation:join", (payload) => {
+			socket.join(payload.roomId);
+			io.to(payload.roomId).emit("user:new", { userId: socket.id });
+			console.log(`User: ${socket.id} joined room: ${payload.roomId} `);
+		});
 	});
 
 	return io;
