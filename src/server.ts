@@ -8,8 +8,12 @@ dotenv.config();
 
 const port = Number(process.env.PORT) || 3786; // your app port
 
-const keyPath = path.resolve("privkey.pem");
-const certPath = path.resolve("fullchain.pem");
+const keyPath = path.resolve(
+	"/home/blue/Documents/github/HomeServer/privkey.pem",
+);
+const certPath = path.resolve(
+	"/home/blue/Documents/github/HomeServer/fullchain.pem",
+);
 
 const options: https.ServerOptions = {
 	key: fs.readFileSync(keyPath),
@@ -24,8 +28,19 @@ const options: https.ServerOptions = {
 	honorCipherOrder: true,
 };
 
-const server = https.createServer(options, app).listen(port, "::", () => {
-	console.log(`HTTPS server running on ${port}`);
-});
+const server = https.createServer(options, app);
 
-const io = setupSocket(server);
+// systemd socket activation check
+if (process.env.LISTEN_FDS === "1") {
+	// fd 3 is the inherited socket
+	server.listen({ fd: 3 });
+	console.log("HTTPS server started via systemd socket (fd 3)");
+} else {
+	// fallback (local/dev)
+	const port = Number(process.env.PORT) || 3786;
+	server.listen(port, "::", () => {
+		console.log(`HTTPS server running on ${port}`);
+	});
+}
+
+setupSocket(server);
