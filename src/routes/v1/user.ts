@@ -1,5 +1,6 @@
 import { type Request, type Response, Router } from "express";
-
+import { prisma } from "../../prisma/client.js";
+import argon2 from "argon2";
 const router = Router();
 
 router.get("/", (req: Request, res: Response) => {
@@ -9,8 +10,35 @@ router.get("/", (req: Request, res: Response) => {
 });
 
 // NOTE: Create new User
-router.post("/", (req: Request, res: Response) => {
+router.post("/", async (req: Request, res: Response) => {
 	const payloadIn = req.body;
+	const password = payloadIn.password;
+
+	const hash = await argon2.hash(password);
+	try {
+		const user = await prisma.user.create({
+			data: {
+				name: `${payloadIn.name}`,
+				phoneNumber: `${payloadIn.phoneNumber}`,
+				password: hash,
+			},
+			select: {
+				name: true,
+				phoneNumber: true,
+			},
+		});
+		if (user) {
+			console.log(`User: ${user}`);
+			return res.status(201).json({
+				user: user,
+			});
+		}
+	} catch (error) {
+		console.log(`Error while creating user: ${error}`);
+		return res.status(401).json({
+			error: "Couldnt register... try AGAIN",
+		});
+	}
 });
 
-export { router as userRoouter };
+export { router as userRouter };

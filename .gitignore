@@ -3,3 +3,7 @@ node_modules
 *.pem
 .env
 server.log
+
+/src/generated/prisma
+
+/src/generated/prisma

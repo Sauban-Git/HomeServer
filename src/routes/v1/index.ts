@@ -1,10 +1,10 @@
 import { Router, type Request, type Response } from "express";
-import { userRoouter } from "./user.js";
 import { convRouter } from "./conversation.js";
 import { msgRouter } from "./message.js";
+import { userRouter } from "./user.js";
 const router = Router();
 
-router.use("/user", userRoouter);
+router.use("/user", userRouter);
 router.use("/message", msgRouter);
 router.use("/conversation", convRouter);
 

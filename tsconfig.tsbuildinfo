@@ -1,1 +1,1 @@
-{"root":["./src/app.ts","./src/server.ts","./src/socket.ts","./src/routes/index.ts","./src/routes/v1/conversation.ts","./src/routes/v1/index.ts","./src/routes/v1/message.ts","./src/routes/v1/user.ts"],"version":"5.9.3"}
+{"root":["./src/app.ts","./src/server.ts","./src/socket.ts","./src/prisma/client.ts","./src/routes/index.ts","./src/routes/v1/conversation.ts","./src/routes/v1/index.ts","./src/routes/v1/message.ts","./src/routes/v1/user.ts"],"version":"5.9.3"}
