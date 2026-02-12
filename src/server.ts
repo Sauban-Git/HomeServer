@@ -6,8 +6,6 @@ import dotenv from "dotenv";
 import { setupSocket } from "./socket.js";
 dotenv.config();
 
-const port = Number(process.env.PORT) || 3786;
-
 const keyPath = path.resolve(
 	"/home/blue/Documents/github/HomeServer/privkey.pem",
 );
