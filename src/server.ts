@@ -1,17 +1,11 @@
 import https from "https";
-import fs from "fs";
-import path from "path";
 import { app } from "./app.js";
 import dotenv from "dotenv";
 import { setupSocket } from "./socket.js";
-dotenv.config();
+import { certPath, keyPath } from "./constants.js";
+import fs from "fs";
 
-const keyPath = path.resolve(
-	"/home/blue/Documents/github/HomeServer/privkey.pem",
-);
-const certPath = path.resolve(
-	"/home/blue/Documents/github/HomeServer/fullchain.pem",
-);
+dotenv.config();
 
 const options: https.ServerOptions = {
 	key: fs.readFileSync(keyPath),

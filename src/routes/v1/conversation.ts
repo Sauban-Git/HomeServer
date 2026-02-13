@@ -1,8 +1,10 @@
 import { type Request, type Response, Router } from "express";
 import { prisma } from "../../prisma/client.js";
+import { existingConversation } from "../../utils/utils.js";
 
 const router = Router();
 
+// HACK: Dont let user hit this.. normal users shouldnt hit this route
 router.get("/", (req: Request, res: Response) => {
 	res.json({
 		message: "Will give you conversation lists",
@@ -14,28 +16,12 @@ router.post("/", async (req: Request, res: Response) => {
 	const payloadIn = req.body;
 
 	try {
-		const conversation = await prisma.conversation.create({
-			data: {
-				users: {
-					connect: [
-						{ phoneNumber: `${payloadIn.phoneNumber1}` },
-						{ phoneNumber: `${payloadIn.phoneNumber2}` },
-					],
-				},
-			},
-			select: {
-				id: true,
-				createdAt: true,
-				users: {
-					select: {
-						name: true,
-						phoneNumber: true,
-					},
-				},
-			},
-		});
-
-		if (conversation) {
+		const { conversation, ifExist } = await existingConversation(
+			payloadIn.userA,
+			payloadIn.userB,
+			false,
+		);
+		if (ifExist) {
 			return res.status(201).json({
 				conversation: conversation,
 			});
@@ -51,5 +37,7 @@ router.post("/", async (req: Request, res: Response) => {
 		});
 	}
 });
+
+// TODO: let user update goup name
 
 export { router as convRouter };

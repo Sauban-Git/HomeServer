@@ -13,6 +13,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum ConversationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
 model User {
   id          String   @id @default(uuid())
   phoneNumber String   @unique
@@ -21,17 +27,31 @@ model User {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  conversations Conversation[] @relation("UserConversations")
-  messages      Message[]
+  conversation ConversationParticipant[]
+  messages     Message[]
+}
+
+model ConversationParticipant {
+  id             String           @id @default(uuid())
+  userId         String
+  conversationId String
+  role           ConversationRole @default(MEMBER) // admin, member
+
+  user         User         @relation(fields: [userId], references: [id])
+  conversation Conversation @relation(fields: [conversationId], references: [id])
+
+  @@unique([userId, conversationId])
 }
 
 model Conversation {
   id        String   @id @default(uuid())
+  name      String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  isGroup   Boolean  @default(false)
 
-  users    User[]    @relation("UserConversations")
-  messages Message[]
+  participants ConversationParticipant[]
+  messages     Message[]
 }
 
 model Message {
