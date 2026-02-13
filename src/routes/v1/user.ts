@@ -26,6 +26,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 				password: hash,
 			},
 			select: {
+				id: true,
 				name: true,
 				phoneNumber: true,
 			},

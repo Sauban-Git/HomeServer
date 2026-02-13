@@ -1,11 +1,10 @@
 import { type Request, type Response, Router } from "express";
-import { prisma } from "../../prisma/client.js";
 import { existingConversation } from "../../utils/utils.js";
 
 const router = Router();
 
 // HACK: Dont let user hit this.. normal users shouldnt hit this route
-router.get("/", (req: Request, res: Response) => {
+router.get("/", (_: Request, res: Response) => {
 	res.json({
 		message: "Will give you conversation lists",
 	});
