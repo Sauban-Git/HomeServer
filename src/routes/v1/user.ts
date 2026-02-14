@@ -109,7 +109,11 @@ router.post("/signin", async (req: Request, res: Response) => {
 					expiresIn: "7d",
 				});
 				return res.status(201).json({
-					user: { name: user.name, phoneNumber: user.phoneNumber },
+					user: {
+						id: user.id,
+						name: user.name,
+						phoneNumber: user.phoneNumber,
+					},
 					token: token,
 				});
 			} else {
