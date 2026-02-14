@@ -72,7 +72,7 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 		socket.on("e2ee:get-key", async ({ userId }, callback) => {
 			const key = publicKeys.get(userId);
 			const key1 = await getUserPublicKey(userId);
-			callback({ publicKey: key1 || key || null });
+			callback(key1 || key || null);
 		});
 
 		socket.on("message:new", (payload) => {
@@ -83,6 +83,7 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 				io.to(payload.roomId).emit("message:new", {
 					msg: payload.msg,
 					iv: payload.iv,
+					senderId: socket.data.userId,
 				});
 			}
 		});
