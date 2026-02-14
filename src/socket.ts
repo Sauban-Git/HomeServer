@@ -7,7 +7,6 @@ import {
 	getOnlineUsers,
 	getUserPublicKey,
 	removeUserOnline,
-	removeUserPublicKey,
 	setUserPublicKey,
 } from "./db/redis.js";
 
@@ -56,6 +55,8 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 	});
 
 	io.on("connection", async (socket) => {
+		console.log(`User connected with userId: ${socket.data.userId}`);
+
 		socket.on("disconnect", async () => {
 			console.log(`User: ${socket.data.userId} disconnected`);
 			publicKeys.delete(socket.data.userId);
@@ -81,7 +82,6 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 			} else {
 				io.to(payload.roomId).emit("message:new", {
 					msg: payload.msg,
-					encryptedKey: payload.encryptedKey,
 					iv: payload.iv,
 				});
 			}
