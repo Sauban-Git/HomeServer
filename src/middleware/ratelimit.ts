@@ -1,5 +1,5 @@
 import rateLimit from "express-rate-limit";
-
+// BUG: We havent used.. it any where yet
 // Limit to 5 login attempts per 15 minutes per IP
 export const signinLimiter = rateLimit({
 	windowMs: 15 * 60 * 1000, // 15 minutes

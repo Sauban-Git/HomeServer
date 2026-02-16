@@ -57,6 +57,7 @@ const USER_KEYS_HASH = "userKeys";
 
 export async function setUserPublicKey(userId: string, publicKey: string) {
 	await connectRedis();
+	console.log(`user: ${userId} setting key: ${publicKey}`);
 	await redisClient.hSet(USER_KEYS_HASH, userId, publicKey);
 }
 

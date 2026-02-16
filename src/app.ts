@@ -7,7 +7,7 @@ app.use(exporess.json());
 
 app.use("/api", apiRouter);
 
-app.get("/", (req: Request, res: Response) => {
+app.get("/", (_: Request, res: Response) => {
 	res.json({
 		message: "You reached me successfully... no issue",
 	});

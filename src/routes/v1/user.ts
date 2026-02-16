@@ -4,6 +4,7 @@ import argon2 from "argon2";
 import jwt from "jsonwebtoken";
 import { privateKey } from "../../constants.js";
 import { authmiddleware } from "../../middleware/authmiddleware.js";
+import { setUserPublicKey } from "../../db/redis.js";
 
 const router = Router();
 
@@ -93,7 +94,6 @@ router.post("/signup", async (req: Request, res: Response) => {
 // NOTE: Signin
 router.post("/signin", async (req: Request, res: Response) => {
 	const payloadIn = req.body;
-	console.log("payload entered: ", payloadIn);
 	const password = payloadIn.password;
 	try {
 		const user = await prisma.user.findUnique({
@@ -101,7 +101,6 @@ router.post("/signin", async (req: Request, res: Response) => {
 				phoneNumber: `${payloadIn.phoneNumber}`,
 			},
 		});
-		console.log("user: ", user);
 		if (user) {
 			const isValid = await argon2.verify(user.password, password);
 			if (isValid) {
@@ -110,7 +109,8 @@ router.post("/signin", async (req: Request, res: Response) => {
 					algorithm: "RS256",
 					expiresIn: "7d",
 				});
-				console.log("done... now sending data: ", user);
+
+				await setUserPublicKey(user.id, payloadIn.publicKey);
 				return res.status(201).json({
 					user: {
 						id: user.id,

@@ -8,7 +8,7 @@ router.use("/user", userRouter);
 router.use("/message", msgRouter);
 router.use("/conversation", convRouter);
 
-router.get("/", (req: Request, res: Response) => {
+router.get("/", (_: Request, res: Response) => {
 	res.json({
 		message: "v1 routes here ... ",
 	});
