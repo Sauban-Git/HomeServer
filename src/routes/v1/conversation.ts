@@ -1,13 +1,39 @@
 import { type Request, type Response, Router } from "express";
-import { existingConversation } from "../../utils/utils.js";
+import { existingConversation, newConversation } from "../../utils/utils.js";
+import { prisma } from "../../prisma/client.js";
 
 const router = Router();
 
-// HACK: Dont let user hit this.. normal users shouldnt hit this route
-router.get("/", (_: Request, res: Response) => {
-	res.json({
-		message: "Will give you conversation lists",
-	});
+router.get("/", async(req: Request, res: Response) => {
+  try {
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        participants: {
+          some: {
+            id: (req as any).userId
+          }
+        }
+      },
+      include: {
+        participants: true
+      }
+    })
+    if (conversations.length !== 0) {
+      return res.status(200).json({
+        conversations
+      })
+    }else {
+      return res.status(200).json({
+        error: `No conversation found`,
+        conversations: null
+      })
+    }
+  } catch (error) {
+    console.log(`Error while getting conversations: ${error}`)
+    return res.status(400).json({
+      error: `No conversation found`
+    })
+  }
 });
 
 // NOTE: let user create new conversation
@@ -25,9 +51,10 @@ router.post("/", async (req: Request, res: Response) => {
 				conversation: conversation,
 			});
 		} else {
-			return res.status(500).json({
-				error: "couldnt create conversation try agaqin...",
-			});
+			const {conversation} = await newConversation((req as any).userId, payloadIn.participantId, false)
+      return res.status(201).json({
+        conversation,
+      })
 		}
 	} catch (error) {
 		console.log(`Error while creating conversation: ${error}`);

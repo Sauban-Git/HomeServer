@@ -9,6 +9,7 @@ import {
 	removeUserOnline,
 	setUserPublicKey,
 } from "./db/redis.js";
+import { newConversation } from "./utils/utils.js";
 
 type PublicKeyStore = Map<string, string>;
 
@@ -55,6 +56,9 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 	});
 
 	io.on("connection", async (socket) => {
+
+    socket.join(socket.data.userId)
+
 		console.log(`User connected with userId: ${socket.data.userId}`);
 
 		socket.on("disconnect", async () => {
@@ -92,6 +96,12 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 		socket.on("message:reply", (payload) => {
 			console.log(`reply to: ${payload.orgMsg} \n ${payload.msg}`);
 		});
+
+    socket.on('conversation:new', async(payload, callback) => {
+      const {conversation} = await newConversation(socket.data.userId, payload.userB, false)
+      callback({conversation})
+      io.to(payload.userB).emit("conversation:new", {conversation})
+    })
 
 		socket.on("conversation:join", async (payload) => {
 			socket.join(payload.roomId);

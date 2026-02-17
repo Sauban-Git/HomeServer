@@ -9,6 +9,5 @@ router.get("/", (_: Request, res: Response) => {
 });
 
 // NOTE: let user create new message or send message + now db here + only encrypted message sent using websocker
-router.post("/", async (req: Request, res: Response) => {});
 
 export { router as msgRouter };

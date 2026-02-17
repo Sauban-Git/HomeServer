@@ -5,6 +5,7 @@ import jwt from "jsonwebtoken";
 import { privateKey } from "../../constants.js";
 import { authmiddleware } from "../../middleware/authmiddleware.js";
 import { setUserPublicKey } from "../../db/redis.js";
+import { signinLimiter } from "../../middleware/ratelimit.js";
 
 const router = Router();
 
@@ -92,7 +93,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 });
 
 // NOTE: Signin
-router.post("/signin", async (req: Request, res: Response) => {
+router.post("/signin", signinLimiter, async (req: Request, res: Response) => {
 	const payloadIn = req.body;
 	const password = payloadIn.password;
 	try {
