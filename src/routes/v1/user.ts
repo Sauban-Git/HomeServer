@@ -9,10 +9,14 @@ import { signinLimiter } from "../../middleware/ratelimit.js";
 
 const router = Router();
 
-router.get("/", async (_: Request, res: Response) => {
+router.get("/", async (req: Request, res: Response) => {
 	try {
 		const users = await prisma.user.findMany({
-			where: {},
+			where: {
+				NOT: {
+					id: (req as any).userId,
+				},
+			},
 			select: {
 				name: true,
 				id: true,
@@ -20,7 +24,7 @@ router.get("/", async (_: Request, res: Response) => {
 			},
 		});
 		if (users) {
-			res.status(201).json({
+			res.status(200).json({
 				users: users,
 			});
 		}
