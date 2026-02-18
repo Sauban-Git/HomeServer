@@ -50,7 +50,7 @@ router.get("/info", authmiddleware, async (req: Request, res: Response) => {
 			},
 		});
 		if (user) {
-			return res.status(201).json({
+			return res.status(200).json({
 				user: user,
 			});
 		} else {
@@ -85,7 +85,7 @@ router.post("/signup", async (req: Request, res: Response) => {
 			},
 		});
 		if (user) {
-			return res.status(201).json({
+			return res.status(200).json({
 				user: user,
 			});
 		}
@@ -116,7 +116,7 @@ router.post("/signin", signinLimiter, async (req: Request, res: Response) => {
 				});
 
 				await setUserPublicKey(user.id, payloadIn.publicKey);
-				return res.status(201).json({
+				return res.status(200).json({
 					user: {
 						id: user.id,
 						name: user.name,
