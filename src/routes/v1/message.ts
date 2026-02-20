@@ -8,6 +8,6 @@ router.get("/", (_: Request, res: Response) => {
 	});
 });
 
-// NOTE: let user create new message or send message + now db here + only encrypted message sent using websocker
+// NOTE: let user create new message or send message + no db here + only encrypted message sent using websocker
 
 export { router as msgRouter };

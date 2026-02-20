@@ -1,5 +1,5 @@
 import { type Request, type Response, Router } from "express";
-import { existingConversation, newConversation } from "../../utils/utils.js";
+import { newConversation } from "../../utils/utils.js";
 import { prisma } from "../../prisma/client.js";
 
 const router = Router();
@@ -42,6 +42,50 @@ router.get("/", async (req: Request, res: Response) => {
 		console.log(`Error while getting conversations: ${error}`);
 		return res.status(400).json({
 			error: `No conversation found`,
+		});
+	}
+});
+
+router.get("/:conversationId", async (req: Request, res: Response) => {
+	const { conversationId } = req.params;
+	if (!conversationId) {
+		return res.status(401).json({
+			error: "Not allowed",
+		});
+	}
+	try {
+		const conversation = await prisma.conversation.findUnique({
+			where: {
+				id: `${conversationId}`,
+			},
+			include: {
+				participants: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								phoneNumber: true,
+							},
+						},
+					},
+				},
+			},
+		});
+		if (conversation) {
+			return res.status(200).json({
+				conversation,
+			});
+		} else {
+			return res.status(200).json({
+				conversation: null,
+				error: "Not found",
+			});
+		}
+	} catch (error) {
+		console.log(`Error while fetching single conv: ${error}`);
+		return res.status(401).json({
+			error: "Not allowed",
 		});
 	}
 });
