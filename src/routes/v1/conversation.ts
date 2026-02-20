@@ -10,12 +10,22 @@ router.get("/", async (req: Request, res: Response) => {
 			where: {
 				participants: {
 					some: {
-						id: (req as any).userId,
+						userId: (req as any).userId,
 					},
 				},
 			},
 			include: {
-				participants: true,
+				participants: {
+					include: {
+						user: {
+							select: {
+								id: true,
+								name: true,
+								phoneNumber: true,
+							},
+						},
+					},
+				},
 			},
 		});
 		if (conversations.length !== 0) {
@@ -39,27 +49,15 @@ router.get("/", async (req: Request, res: Response) => {
 // NOTE: let user create new conversation
 router.post("/", async (req: Request, res: Response) => {
 	const payloadIn = req.body;
-
 	try {
-		const { conversation, ifExist } = await existingConversation(
-			payloadIn.userA,
-			payloadIn.userB,
+		const { conversation } = await newConversation(
+			(req as any).userId,
+			payloadIn.participantId,
 			false,
 		);
-		if (ifExist) {
-			return res.status(200).json({
-				conversation: conversation,
-			});
-		} else {
-			const { conversation } = await newConversation(
-				(req as any).userId,
-				payloadIn.participantId,
-				false,
-			);
-			return res.status(200).json({
-				conversation,
-			});
-		}
+		return res.status(200).json({
+			conversation,
+		});
 	} catch (error) {
 		console.log(`Error while creating conversation: ${error}`);
 		return res.status(402).json({

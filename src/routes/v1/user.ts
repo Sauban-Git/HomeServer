@@ -9,7 +9,7 @@ import { signinLimiter } from "../../middleware/ratelimit.js";
 
 const router = Router();
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", authmiddleware, async (req: Request, res: Response) => {
 	try {
 		const users = await prisma.user.findMany({
 			where: {
@@ -131,6 +131,7 @@ router.post("/signin", signinLimiter, async (req: Request, res: Response) => {
 			}
 		}
 	} catch (error) {
+		console.log(`Error while singin: `, error);
 		return res.status(401).json({
 			error: "Invalid credentials",
 		});

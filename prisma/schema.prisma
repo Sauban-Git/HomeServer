@@ -50,8 +50,9 @@ model Conversation {
   updatedAt DateTime @updatedAt
   isGroup   Boolean  @default(false)
 
-  participants ConversationParticipant[]
-  messages     Message[]
+  participants    ConversationParticipant[]
+  messages        Message[]
+  participantHash String?                   @unique
 }
 
 model Message {
