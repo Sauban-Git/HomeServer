@@ -56,8 +56,7 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 	});
 
 	io.on("connection", async (socket) => {
-
-    socket.join(socket.data.userId)
+		socket.join(socket.data.userId);
 
 		console.log(`User connected with userId: ${socket.data.userId}`);
 
@@ -80,7 +79,6 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 		});
 
 		socket.on("message:new", (payload) => {
-			console.log(`Encrypted msg from ${socket.data.userId}: ${payload.msg}`);
 			if (!payload.roomId) {
 				console.log("No roomId to broadcase this message");
 			} else {
@@ -97,11 +95,15 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 			console.log(`reply to: ${payload.orgMsg} \n ${payload.msg}`);
 		});
 
-    socket.on('conversation:new', async(payload, callback) => {
-      const {conversation} = await newConversation(socket.data.userId, payload.userB, false)
-      callback({conversation})
-      io.to(payload.userB).emit("conversation:new", {conversation})
-    })
+		socket.on("conversation:new", async (payload, callback) => {
+			const { conversation } = await newConversation(
+				socket.data.userId,
+				payload.userB,
+				false,
+			);
+			callback({ conversation });
+			io.to(payload.userB).emit("conversation:new", { conversation });
+		});
 
 		socket.on("conversation:join", async (payload) => {
 			socket.join(payload.roomId);
@@ -111,9 +113,6 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 			await addUserOnline(socket.data.userId);
 			const onlineUsers = await getOnlineUsers();
 			io.to(payload.roomId).emit("online:users", onlineUsers);
-			console.log(
-				`User: ${socket.data.userId} joined room: ${payload.roomId} `,
-			);
 		});
 	});
 
