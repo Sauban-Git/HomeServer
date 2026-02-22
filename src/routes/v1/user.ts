@@ -66,7 +66,7 @@ router.get("/info", authmiddleware, async (req: Request, res: Response) => {
 });
 
 // NOTE: Create new User
-router.post("/signup", async (req: Request, res: Response) => {
+router.post("/signup", signinLimiter, async (req: Request, res: Response) => {
 	const payloadIn = req.body;
 	const password = payloadIn.password;
 
