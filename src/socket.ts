@@ -83,7 +83,7 @@ export const setupSocket = (httpsServer: HttpsServer) => {
 				console.log("No roomId to broadcase this message");
 			} else {
 				console.log("new msg: ", payload.msg);
-				io.to(payload.roomId).emit("message:new", {
+				socket.to(payload.roomId).emit("message:new", {
 					msg: payload.msg,
 					iv: payload.iv,
 					senderId: socket.data.userId,
