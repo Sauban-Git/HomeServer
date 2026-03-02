@@ -3,7 +3,7 @@ import { v1Router } from "./v1/index.js";
 const router = Router();
 
 router.get("/", (_: Request, res: Response) => {
-	res.json({
+	return res.status(200).json({
 		message: "api routes here ...",
 	});
 });

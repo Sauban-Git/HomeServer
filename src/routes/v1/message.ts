@@ -3,7 +3,7 @@ import { type Request, type Response, Router } from "express";
 const router = Router();
 
 router.get("/", (_: Request, res: Response) => {
-	res.json({
+	return res.status(200).json({
 		message: "Will give you message List",
 	});
 });

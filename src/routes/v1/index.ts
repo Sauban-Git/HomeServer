@@ -10,7 +10,7 @@ router.use("/message", authmiddleware, msgRouter);
 router.use("/conversation", authmiddleware, convRouter);
 
 router.get("/", (_: Request, res: Response) => {
-	res.json({
+	return res.status(200).json({
 		message: "v1 routes here ... ",
 	});
 });

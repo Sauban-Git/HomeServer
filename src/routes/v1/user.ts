@@ -24,8 +24,12 @@ router.get("/", authmiddleware, async (req: Request, res: Response) => {
 			},
 		});
 		if (users) {
-			res.status(200).json({
+			return res.status(200).json({
 				users: users,
+			});
+		} else {
+			return res.status(200).json({
+				users: null,
 			});
 		}
 	} catch (error) {
@@ -54,8 +58,8 @@ router.get("/info", authmiddleware, async (req: Request, res: Response) => {
 				user: user,
 			});
 		} else {
-			return res.status(401).json({
-				error: "Invalid credentials",
+			return res.status(200).json({
+				error: "No users found!",
 			});
 		}
 	} catch (error) {
@@ -87,6 +91,10 @@ router.post("/signup", signinLimiter, async (req: Request, res: Response) => {
 		if (user) {
 			return res.status(200).json({
 				user: user,
+			});
+		} else {
+			return res.status(200).json({
+				user: null,
 			});
 		}
 	} catch (error) {
@@ -125,10 +133,16 @@ router.post("/signin", signinLimiter, async (req: Request, res: Response) => {
 					token: token,
 				});
 			} else {
-				return res.status(401).json({
+				return res.status(200).json({
+					user: null,
 					error: "Invalid credentials",
 				});
 			}
+		} else {
+			return res.status(200).json({
+				user: null,
+				error: "No user found",
+			});
 		}
 	} catch (error) {
 		console.log(`Error while singin: `, error);
