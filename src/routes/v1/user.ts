@@ -40,8 +40,13 @@ router.get("/", authmiddleware, async (req: Request, res: Response) => {
 });
 
 // NOTE: for getting info like name phoneNumber etc...
+// TODO: will separate for getting other users info ...
 router.get("/info", authmiddleware, async (req: Request, res: Response) => {
-	const userId = (req as any).userId;
+	var userId = req.query.userId as string;
+	if (!userId) {
+		userId = (req as any).userId;
+	}
+	// const userId = (req as any).userId;
 	try {
 		const user = await prisma.user.findUnique({
 			where: {
